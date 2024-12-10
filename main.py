@@ -729,33 +729,33 @@ if a1 == 2 and a2 == 3:
             basic.pause(2000)
     OLED12864_I2C.clear()
     if i4 == 2:
-        draw_text("A decision has been reached.^We recommend an iPhone 16 Pro.^It's $999, worth the money.^You saved $200 on not getting^the Pro Max, you got a good deal.", x, y, spacing)
+        draw_text("A decision has been reached.^We recommend an iPhone 16 Pro.^It's $999, worth the money.^You saved $200 on not getting^the Pro Max, you got a good deal", x, y, spacing)
         while True:
             basic.pause(1)
     if i4 == 1:
         draw_text("A decision has been reached.^We recommend iPhone 16 Pro MaxIt's $1199, but worth the money.You said the extra battery and^storage are worth it, so you^ are getting a good deal.", x, y, spacing)
         while True:
             basic.pause(1)
-    draw_text("Are you alright with extra^weight and size at all times^The 16 Pro Max has the^largest display ever on an iPhone.^It is also the largest iPhone ever?^1.  I'm alright with it^2.  I dislike the size and weight", x, y, spacing)
+    draw_text("Are you alright with extra^weight and size at all times?^The 16 Pro Max has the largest^display ever on an iPhone.^It is also the largest iPhone ever.^1.  I'm alright with it^2.  I dislike the size and weight", x, y, spacing)
     answered = False
     while not answered:
         if pins.digital_read_pin(DigitalPin.P0) == 0:
             answered = True
             i5 = 1
             OLED12864_I2C.clear()
-            you_chose("you're alright with it.", 9)
+            you_chose("you're alright with it", 45)
         elif pins.digital_read_pin(DigitalPin.P1) == 0:
             answered = True
             i5 = 2
             OLED12864_I2C.clear()
-            you_chose("that you dislike it.", 18)
+            you_chose("that you dislike it", 54)
     OLED12864_I2C.clear()
     if i5 == 2:
-        draw_text("A decision has been reached.^We recommend an iPhone 16 Pro.^It's $999, worth the money.^You decided that the size and^weight are not worth it.^It is more lightweight and compact.", x, y, spacing)
+        draw_text("A decision has been reached.^We recommend an iPhone 16 Pro.^It's $999, worth the money.^You decided that the size and^weight are not worth it.^It is much more lightweight and^compact than the 16 Pro Max.", x, y, spacing)
         while True:
             basic.pause(1)
     if i5 == 1:
-        draw_text("A decision has been reached.^We recommend iPhone 16 Pro MaxIt's $1199, but worth the money.You said you are alright with^the size and weight of it,^so get ready to experience the^biggest iPhone ever.", x, y, spacing)
+        draw_text("A decision has been reached.^We recommend iPhone 16 Pro MaxIt's $1199, but worth the money.You're alright with the size^and weight of it, so get ready^to experience the biggest iPhone^and most immersive screen ever.", x, y, spacing)
         while True:
             basic.pause(1)
 OLED12864_I2C.clear()
