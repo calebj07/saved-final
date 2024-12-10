@@ -406,6 +406,14 @@ def caps_e(x: int, y: int, spacing: int):
     OLED12864_I2C.hline(x + 1, y + 6, 3, 1) # Bottom horizontal line
     return 4 + spacing  # width of character
 
+def caps_m(x: int, y: int, spacing: int):
+    OLED12864_I2C.vline(x, y, 7, 1)         # Left vertical line
+    OLED12864_I2C.pixel(x + 1, y + 1, 1)    # Second row second pixel
+    OLED12864_I2C.hline(x + 2, y + 2, 1, 1) # Middle horizontal line
+    OLED12864_I2C.pixel(x + 3, y + 1, 1)    # Second row fourth pixel
+    OLED12864_I2C.vline(x + 4, y, 7, 1)     # Right vertical line
+    return 5 + spacing  # width of character
+
 def period(x: int, y: int, spacing: int):
     OLED12864_I2C.pixel(x, y + 6, 1)
     return 1 + spacing  # width of character
@@ -547,6 +555,8 @@ def draw_text(text: str, x: int, y: int, spacing: int):
             x += caps_i(x, y, spacing)
         elif char == 'E':
             x += caps_e(x, y, spacing)
+        elif char == 'M':
+            x += caps_m(x, y, spacing)
         elif char == "'":
             x += apostrophe(x, y, spacing)
         elif char == '"':
@@ -616,9 +626,7 @@ if iPhoneSE:
         basic.pause(1)
 sixtyHziPhone = (a1 == 2 and a2 != 3)
 answered = False
-if not sixtyHziPhone:
-    draw_text("Desired refresh rate?^1.  60Hz^2.  90Hz^3.  120Hz+", x, y, spacing)
-else:
+if sixtyHziPhone:
     draw_text('6.1" or 6.7" screen size?^1.  6.1"^2.  6.7"^3.  No preference ', x, y, spacing)
     while not answered:
         if pins.digital_read_pin(DigitalPin.P0) == 0:
@@ -671,7 +679,88 @@ else:
             draw_text("A decision has been reached.^We recommend an iPhone 16.^It's $799, within the budget.^It still has great battery life.", x, y, spacing)
             while True:
                 basic.pause(1)
-    answered = True
+answered = False
+if a1 == 2 and a2 == 3:
+    draw_text('6.3" or 6.9" screen size?^1.  6.3"^2.  6.9"^3.  No preference ', x, y, spacing)
+    while not answered:
+        if pins.digital_read_pin(DigitalPin.P0) == 0:
+            answered = True
+            i3 = 1
+            OLED12864_I2C.clear()
+            you_chose('6.3"', 9)
+        elif pins.digital_read_pin(DigitalPin.P1) == 0:
+            answered = True
+            i3 = 2
+            OLED12864_I2C.clear()
+            you_chose('6.9"', 18)
+        elif pins.digital_read_pin(DigitalPin.P2) == 0:
+            answered = True
+            i3 = 3
+            OLED12864_I2C.clear()
+            draw_text("You did not have a preference.", x, 27, spacing)
+            basic.pause(2000)
+    OLED12864_I2C.clear()
+    if i3 == 1:
+        draw_text("A decision has been reached.^We recommend an iPhone 16 Pro.^It's $999, worth the money.^It has the 6.3 inch display too.", x, y, spacing)
+        while True:
+            basic.pause(1)
+    if i3 == 2:
+        draw_text("A decision has been reached.^We recommend iPhone 16 Pro MaxIt's $1199, but worth the money.It also has the massive 6.9 inch^display that you wanted.", x, y, spacing)
+        while True:
+            basic.pause(1)
+    draw_text("Is $200 more for extra batteryand double the storage worth it?1.  I think it's worth it^2.  I don't think it's worth it^3.  No preference ", x, y, spacing)
+    answered = False
+    while not answered:
+        if pins.digital_read_pin(DigitalPin.P0) == 0:
+            answered = True
+            i4 = 1
+            OLED12864_I2C.clear()
+            you_chose("that it's worth it", 9)
+        elif pins.digital_read_pin(DigitalPin.P1) == 0:
+            answered = True
+            i4 = 2
+            OLED12864_I2C.clear()
+            you_chose("it's not worth it", 18)
+        elif pins.digital_read_pin(DigitalPin.P2) == 0:
+            answered = True
+            i4 = 3
+            OLED12864_I2C.clear()
+            draw_text("You did not have a preference.", x, 27, spacing)
+            basic.pause(2000)
+    OLED12864_I2C.clear()
+    if i4 == 2:
+        draw_text("A decision has been reached.^We recommend an iPhone 16 Pro.^It's $999, worth the money.^You saved $200 on not getting^the Pro Max, you got a good deal.", x, y, spacing)
+        while True:
+            basic.pause(1)
+    if i4 == 1:
+        draw_text("A decision has been reached.^We recommend iPhone 16 Pro MaxIt's $1199, but worth the money.You said the extra battery and^storage are worth it, so you^ are getting a good deal.", x, y, spacing)
+        while True:
+            basic.pause(1)
+    draw_text("Are you alright with extra^weight and size at all times^The 16 Pro Max has the^largest display ever on an iPhone.^It is also the largest iPhone ever?^1.  I'm alright with it^2.  I dislike the size and weight", x, y, spacing)
+    answered = False
+    while not answered:
+        if pins.digital_read_pin(DigitalPin.P0) == 0:
+            answered = True
+            i5 = 1
+            OLED12864_I2C.clear()
+            you_chose("you're alright with it.", 9)
+        elif pins.digital_read_pin(DigitalPin.P1) == 0:
+            answered = True
+            i5 = 2
+            OLED12864_I2C.clear()
+            you_chose("that you dislike it.", 18)
+    OLED12864_I2C.clear()
+    if i5 == 2:
+        draw_text("A decision has been reached.^We recommend an iPhone 16 Pro.^It's $999, worth the money.^You decided that the size and^weight are not worth it.^It is more lightweight and compact.", x, y, spacing)
+        while True:
+            basic.pause(1)
+    if i5 == 1:
+        draw_text("A decision has been reached.^We recommend iPhone 16 Pro MaxIt's $1199, but worth the money.You said you are alright with^the size and weight of it,^so get ready to experience the^biggest iPhone ever.", x, y, spacing)
+        while True:
+            basic.pause(1)
+OLED12864_I2C.clear()
+draw_text("Desired refresh rate?^1.  60Hz^2.  90Hz^3.  120Hz+", x, y, spacing)
+answered = False
 while not answered:
     if pins.digital_read_pin(DigitalPin.P0) == 0:
         answered = True
@@ -693,4 +782,4 @@ while not answered:
 
 
 
-draw_text("Currently under construction.", 0, 0, 0)
+draw_text("Currently under construction.", 0, 0, spacing)
