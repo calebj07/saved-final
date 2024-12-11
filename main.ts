@@ -6,6 +6,8 @@ let i3: number;
 let i4: number;
 let i5: number;
 let a3: number;
+let a4: number;
+let a5: number;
 function a(x: number, y: number, spacing: number) {
     OLED12864_I2C.pixel(x + 1, y + 2, 1)
     OLED12864_I2C.pixel(x + 2, y + 3, 1)
@@ -259,24 +261,21 @@ function x_(x: number, y: number, spacing: number) {
 
 //  width of letter
 function y_(x: number, y: number, spacing: number) {
-    OLED12864_I2C.vline(x + 2, y + 5, 3, 1)
-    //  Middle vertical line
-    OLED12864_I2C.pixel(x, y + 3, 1)
-    //  Top left dot
-    OLED12864_I2C.pixel(x + 4, y + 3, 1)
-    //  Top right dot
-    OLED12864_I2C.pixel(x + 1, y + 4, 1)
-    //  Upper middle left dot
-    OLED12864_I2C.pixel(x + 3, y + 4, 1)
-    //  Upper middle right dot
+    OLED12864_I2C.pixel(x, y + 4, 1)
+    OLED12864_I2C.pixel(x + 4, y + 4, 1)
+    OLED12864_I2C.pixel(x + 1, y + 5, 1)
+    //  Second row second pixel
+    OLED12864_I2C.pixel(x + 3, y + 5, 1)
+    //  Third row third pixel
+    OLED12864_I2C.vline(x + 2, y + 6, 2, 1)
+    //  Vertical line from y+7 to y+8
     OLED12864_I2C.pixel(x + 1, y + 8, 1)
-    //  Lower left curve dot
     OLED12864_I2C.pixel(x, y + 9, 1)
-    //  Bottom dot
+    //  Sixth row fifth pixel (adjusted)
     return 5 + spacing
 }
 
-//  width of letter
+//  width of character
 function z_(x: number, y: number, spacing: number) {
     OLED12864_I2C.hline(x, y + 3, 4, 1)
     //  Top horizontal line
@@ -685,6 +684,38 @@ function caps_m(x: number, y: number, spacing: number) {
 }
 
 //  width of character
+function caps_g(x: number, y: number, spacing: number) {
+    OLED12864_I2C.hline(x + 1, y, 3, 1)
+    //  Top horizontal line
+    OLED12864_I2C.vline(x, y + 1, 5, 1)
+    //  Left vertical line
+    OLED12864_I2C.pixel(x + 4, y + 1, 1)
+    //  Top right pixel
+    OLED12864_I2C.hline(x + 2, y + 3, 3, 1)
+    //  Middle horizontal line
+    OLED12864_I2C.vline(x + 4, y + 3, 3, 1)
+    //  Right vertical line
+    OLED12864_I2C.hline(x + 1, y + 6, 3, 1)
+    //  Bottom horizontal line
+    return 5 + spacing
+}
+
+//  width of character
+function caps_u(x: number, y: number, spacing: number) {
+    OLED12864_I2C.vline(x, y, 6, 1)
+    OLED12864_I2C.vline(x + 3, y, 6, 1)
+    OLED12864_I2C.hline(x + 1, y + 6, 2, 1)
+    return 4 + spacing
+}
+
+//  width of the character
+function caps_l(x: number, y: number, spacing: number) {
+    OLED12864_I2C.vline(x, y, 7, 1)
+    OLED12864_I2C.hline(x + 1, y + 6, 3, 1)
+    return 4 + spacing
+}
+
+//  width of the character
 function period(x: number, y: number, spacing: number) {
     OLED12864_I2C.pixel(x, y + 6, 1)
     return 1 + spacing
@@ -706,6 +737,24 @@ function comma(x: number, y: number, spacing: number) {
     OLED12864_I2C.vline(x, y + 6, 2, 1)
     OLED12864_I2C.pixel(x - 1, y + 8, 1)
     return 1 + spacing
+}
+
+function percent(x: number, y: number, spacing: number) {
+    OLED12864_I2C.pixel(x + 5, y + 1, 1)
+    OLED12864_I2C.pixel(x + 4, y + 2, 1)
+    OLED12864_I2C.pixel(x + 3, y + 3, 1)
+    OLED12864_I2C.pixel(x + 2, y + 4, 1)
+    OLED12864_I2C.pixel(x + 1, y + 5, 1)
+    OLED12864_I2C.pixel(x, y + 6, 1)
+    OLED12864_I2C.rect(x + 3, y + 4, x + 5, y + 6, 1)
+    OLED12864_I2C.rect(x, y + 1, x + 2, y + 3, 1)
+    return 6 + spacing
+}
+
+//  width of the character
+function dash(x: number, y: number, spacing: number) {
+    OLED12864_I2C.hline(x, y + 3, 3, 1)
+    return 3 + spacing
 }
 
 function space(): number {
@@ -836,12 +885,22 @@ function draw_text(text: string, x: number, y: number, spacing: number) {
             x += caps_e(x, y, spacing)
         } else if (char == "M") {
             x += caps_m(x, y, spacing)
+        } else if (char == "G") {
+            x += caps_g(x, y, spacing)
         } else if (char == "'") {
             x += apostrophe(x, y, spacing)
         } else if (char == "\"") {
             x += quotations(x, y, spacing)
         } else if (char == ",") {
             x += comma(x, y, spacing)
+        } else if (char == "%") {
+            x += percent(x, y, spacing)
+        } else if (char == "-") {
+            x += dash(x, y, spacing)
+        } else if (char == "U") {
+            x += caps_u(x, y, spacing)
+        } else if (char == "L") {
+            x += caps_l(x, y, spacing)
         }
         
     }
@@ -862,7 +921,7 @@ let y = 0
 //  starting y position
 let spacing = 1
 //  space between letters
-draw_text("Preferred operating system?^1.  Android^2.  iOS^3.  No preference", x, y, spacing)
+draw_text("Preferred operating system?^1.  Android^2.  iOS", x, y, spacing)
 let answered = false
 while (!answered) {
     if (pins.digitalReadPin(DigitalPin.P0) == 0) {
@@ -875,12 +934,6 @@ while (!answered) {
         a1 = 2
         OLED12864_I2C.clear()
         you_chose("iOS", 18)
-    } else if (pins.digitalReadPin(DigitalPin.P2) == 0) {
-        answered = true
-        a1 = 3
-        OLED12864_I2C.clear()
-        draw_text("You did not have a preference.", x, 27, spacing)
-        basic.pause(2000)
     }
     
 }
@@ -1101,22 +1154,145 @@ if (a1 == 2 && a2 == 3) {
 }
 
 OLED12864_I2C.clear()
+let budget_Android = a1 == 1 && a2 == 1
+if (budget_Android) {
+    draw_text("A decision has been reached.^We recommend Google Pixel 8a.^As you want, it is Android.^It's $499, within your budget.", x, y, spacing)
+    while (true) {
+        basic.pause(1)
+    }
+}
+
+let midrange_Android = a1 == 1 && a2 == 2
+if (midrange_Android) {
+    draw_text("Do you prefer 40-60% extra^performance or an hour more^of battery life?^1.  I prefer the performance^2.  I prefer the hour of battery^3.  No preference ", x, y, spacing)
+    answered = false
+    while (!answered) {
+        if (pins.digitalReadPin(DigitalPin.P0) == 0) {
+            answered = true
+            a3 = 1
+            OLED12864_I2C.clear()
+            you_chose("extra performance", 9)
+        } else if (pins.digitalReadPin(DigitalPin.P1) == 0) {
+            answered = true
+            a3 = 2
+            OLED12864_I2C.clear()
+            you_chose("the battery life", 18)
+        } else if (pins.digitalReadPin(DigitalPin.P2) == 0) {
+            answered = true
+            a3 = 3
+            OLED12864_I2C.clear()
+            draw_text("You did not have a preference.", x, 27, spacing)
+            basic.pause(2000)
+        }
+        
+    }
+    OLED12864_I2C.clear()
+    if (a3 == 1) {
+        draw_text("A decision has been reached.^You'll like Samsung Galaxy S24.^It's $799, within your budget.^The Pixel 9 is the alternative,^and even though it has one^hour extra of battery, the^S24 outperforms it by 40-60%.", x, y, spacing)
+        while (true) {
+            basic.pause(1)
+        }
+    }
+    
+    if (a3 == 2) {
+        draw_text("A decision has been reached.^We recommend Google Pixel 9.^It's $799, within your budget.^Even though it loses out on^some performance to the GalaxyS24, It makes up for it with^its incredible battery life.", x, y, spacing)
+        while (true) {
+            basic.pause(1)
+        }
+    }
+    
+    if (a3 == 3) {
+        draw_text("Do you prefer stock Android^by Google or the fork of^Android called One UI by^Samsung?^1.  I prefer stock Android^2.  I prefer Samsung's One UI^3.  No preference ", x, y, spacing)
+        answered = false
+        while (!answered) {
+            if (pins.digitalReadPin(DigitalPin.P0) == 0) {
+                answered = true
+                a4 = 1
+                OLED12864_I2C.clear()
+                you_chose("stock Android", 9)
+            } else if (pins.digitalReadPin(DigitalPin.P1) == 0) {
+                answered = true
+                a4 = 2
+                OLED12864_I2C.clear()
+                you_chose("One UI", 18)
+            } else if (pins.digitalReadPin(DigitalPin.P2) == 0) {
+                answered = true
+                a4 = 3
+                OLED12864_I2C.clear()
+                draw_text("You did not have a preference.", x, 27, spacing)
+                basic.pause(2000)
+            }
+            
+        }
+        OLED12864_I2C.clear()
+        if (a4 == 2) {
+            draw_text("A decision has been reached.^You'll like Samsung Galaxy S24.^It's $799, within your budget.^It runs Samsung's One UI, just^as you wanted it to.", x, y, spacing)
+            while (true) {
+                basic.pause(1)
+            }
+        }
+        
+        if (a4 == 1) {
+            draw_text("A decision has been reached.^We recommend Google Pixel 9.^It's $799, within your budget.^It runs stock Android, just^as you wanted it to.", x, y, spacing)
+            while (true) {
+                basic.pause(1)
+            }
+        }
+        
+        if (a4 == 3) {
+            draw_text("Pixel 9 and Galaxy S24 are the^same size, but the Pixel 9^weighs 20% more. Some think it^feels premium, others think its^impractical. Your preference?^1.  Extra weight is better^2.  Less weight is practical", x, y, spacing)
+            answered = false
+            while (!answered) {
+                if (pins.digitalReadPin(DigitalPin.P0) == 0) {
+                    answered = true
+                    a5 = 1
+                    OLED12864_I2C.clear()
+                    you_chose("the extra weight", 9)
+                } else if (pins.digitalReadPin(DigitalPin.P1) == 0) {
+                    answered = true
+                    a5 = 2
+                    OLED12864_I2C.clear()
+                    you_chose("less weight", 18)
+                }
+                
+            }
+            OLED12864_I2C.clear()
+            if (a5 == 2) {
+                draw_text("A decision has been reached.^You'll like Samsung Galaxy S24.^It's $799, within your budget.^It is 20% lighter than the Pixel 9,^just like you wanted it to be.", x, y, spacing)
+                while (true) {
+                    basic.pause(1)
+                }
+            }
+            
+            if (a5 == 1) {
+                draw_text("A decision has been reached.^We recommend Google Pixel 9.^It's $799, within your budget.^It has the extra weight to^make it feel more premium too.", x, y, spacing)
+                while (true) {
+                    basic.pause(1)
+                }
+            }
+            
+        }
+        
+    }
+    
+}
+
 draw_text("Desired refresh rate?^1.  60Hz^2.  90Hz^3.  120Hz+", x, y, spacing)
 answered = false
 while (!answered) {
     if (pins.digitalReadPin(DigitalPin.P0) == 0) {
         answered = true
-        a3 = 1
+        a4 = 1
         OLED12864_I2C.clear()
         you_chose("60Hz", 9)
     } else if (pins.digitalReadPin(DigitalPin.P1) == 0) {
         answered = true
-        a3 = 2
+        a4 = 2
         OLED12864_I2C.clear()
         you_chose("90Hz", 18)
     } else if (pins.digitalReadPin(DigitalPin.P2) == 0) {
         answered = true
-        a3 = 3
+        a4 = 3
         OLED12864_I2C.clear()
         you_chose("120Hz+", 27)
     }

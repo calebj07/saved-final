@@ -183,14 +183,14 @@ def x_(x: int, y: int, spacing: int):
     return 4 + spacing  # width of letter
 
 def y_(x: int, y: int, spacing: int):
-    OLED12864_I2C.vline(x + 2, y + 5, 3, 1)  # Middle vertical line
-    OLED12864_I2C.pixel(x, y + 3, 1)         # Top left dot
-    OLED12864_I2C.pixel(x + 4, y + 3, 1)     # Top right dot
-    OLED12864_I2C.pixel(x + 1, y + 4, 1)     # Upper middle left dot
-    OLED12864_I2C.pixel(x + 3, y + 4, 1)     # Upper middle right dot
-    OLED12864_I2C.pixel(x + 1, y + 8, 1)     # Lower left curve dot
-    OLED12864_I2C.pixel(x, y + 9, 1)         # Bottom dot
-    return 5 + spacing  # width of letter
+    OLED12864_I2C.pixel(x, y + 4, 1)
+    OLED12864_I2C.pixel(x + 4, y + 4, 1)
+    OLED12864_I2C.pixel(x + 1, y + 5, 1)       # Second row second pixel
+    OLED12864_I2C.pixel(x + 3, y + 5, 1)       # Third row third pixel
+    OLED12864_I2C.vline(x + 2, y + 6, 2, 1)    # Vertical line from y+7 to y+8
+    OLED12864_I2C.pixel(x + 1, y + 8, 1)
+    OLED12864_I2C.pixel(x, y + 9, 1)      # Sixth row fifth pixel (adjusted)
+    return 5 + spacing  # width of character
 
 def z_(x: int, y: int, spacing: int):
     OLED12864_I2C.hline(x, y + 3, 4, 1)     # Top horizontal line
@@ -414,6 +414,26 @@ def caps_m(x: int, y: int, spacing: int):
     OLED12864_I2C.vline(x + 4, y, 7, 1)     # Right vertical line
     return 5 + spacing  # width of character
 
+def caps_g(x: int, y: int, spacing: int):
+    OLED12864_I2C.hline(x + 1, y, 3, 1)   # Top horizontal line
+    OLED12864_I2C.vline(x, y + 1, 5, 1)   # Left vertical line
+    OLED12864_I2C.pixel(x + 4, y + 1, 1)  # Top right pixel
+    OLED12864_I2C.hline(x + 2, y + 3, 3, 1) # Middle horizontal line
+    OLED12864_I2C.vline(x + 4, y + 3, 3, 1) # Right vertical line
+    OLED12864_I2C.hline(x + 1, y + 6, 3, 1) # Bottom horizontal line
+    return 5 + spacing  # width of character
+
+def caps_u(x: int, y: int, spacing: int):
+    OLED12864_I2C.vline(x, y, 6, 1)
+    OLED12864_I2C.vline(x + 3, y, 6, 1)
+    OLED12864_I2C.hline(x + 1, y + 6, 2, 1)
+    return 4 + spacing  # width of the character
+
+def caps_l(x: int, y: int, spacing: int):
+    OLED12864_I2C.vline(x, y, 7, 1)
+    OLED12864_I2C.hline(x + 1, y + 6, 3, 1)
+    return 4 + spacing  # width of the character
+
 def period(x: int, y: int, spacing: int):
     OLED12864_I2C.pixel(x, y + 6, 1)
     return 1 + spacing  # width of character
@@ -431,6 +451,21 @@ def comma(x: int, y: int, spacing: int):
     OLED12864_I2C.vline(x, y + 6, 2, 1)
     OLED12864_I2C.pixel(x - 1, y + 8, 1)
     return 1 + spacing
+
+def percent(x: int, y: int, spacing: int):
+    OLED12864_I2C.pixel(x + 5, y + 1, 1)
+    OLED12864_I2C.pixel(x + 4, y + 2, 1)
+    OLED12864_I2C.pixel(x + 3, y + 3, 1)
+    OLED12864_I2C.pixel(x + 2, y + 4, 1)
+    OLED12864_I2C.pixel(x + 1, y + 5, 1)
+    OLED12864_I2C.pixel(x, y + 6, 1)
+    OLED12864_I2C.rect(x + 3, y + 4, x + 5, y + 6, 1)
+    OLED12864_I2C.rect(x, y + 1, x + 2, y + 3, 1)
+    return 6 + spacing  # width of the character
+
+def dash(x: int, y: int, spacing: int):
+    OLED12864_I2C.hline(x, y + 3, 3, 1)
+    return 3 + spacing
 
 def space():
     return 1
@@ -557,13 +592,22 @@ def draw_text(text: str, x: int, y: int, spacing: int):
             x += caps_e(x, y, spacing)
         elif char == 'M':
             x += caps_m(x, y, spacing)
+        elif char == 'G':
+            x += caps_g(x, y, spacing)
         elif char == "'":
             x += apostrophe(x, y, spacing)
         elif char == '"':
             x += quotations(x, y, spacing)
         elif char == ',':
             x += comma(x, y, spacing)
-
+        elif char == '%':
+            x += percent(x, y, spacing)
+        elif char == '-':
+            x += dash(x, y, spacing)
+        elif char == 'U':
+            x += caps_u(x, y, spacing)
+        elif char == 'L':
+            x += caps_l(x, y, spacing)
 def you_chose(selection, y):
     draw_text("You chose " + selection + ".", 0, y, spacing)
     basic.pause(2000)
@@ -580,7 +624,7 @@ pins.set_pull(DigitalPin.P2, PinPullMode.PULL_UP)
 x = 0  # starting x position
 y = 0  # starting y position
 spacing = 1  # space between letters
-draw_text("Preferred operating system?^1.  Android^2.  iOS^3.  No preference", x, y, spacing)
+draw_text("Preferred operating system?^1.  Android^2.  iOS", x, y, spacing)
 answered = False
 while not answered:
     if pins.digital_read_pin(DigitalPin.P0) == 0:
@@ -591,14 +635,9 @@ while not answered:
     elif pins.digital_read_pin(DigitalPin.P1) == 0:
         answered = True
         a1 = 2
+        
         OLED12864_I2C.clear()
         you_chose("iOS", 18)
-    elif pins.digital_read_pin(DigitalPin.P2) == 0:
-        answered = True
-        a1 = 3
-        OLED12864_I2C.clear()
-        draw_text("You did not have a preference.", x, 27, spacing)
-        basic.pause(2000)
 OLED12864_I2C.clear()
 answered = False
 draw_text("What is your budget?^1.  $600 and below^2.  $600 to $900^3.  $900 and above", x, y, spacing)
@@ -759,22 +798,109 @@ if a1 == 2 and a2 == 3:
         while True:
             basic.pause(1)
 OLED12864_I2C.clear()
+budget_Android = a1 == 1 and a2 == 1
+if budget_Android:
+        draw_text("A decision has been reached.^We recommend Google Pixel 8a.^As you want, it is Android.^It's $499, within your budget.", x, y, spacing)
+        while True:
+            basic.pause(1)
+midrange_Android = a1 == 1 and a2 == 2
+if midrange_Android:
+    draw_text("Do you prefer 40-60% extra^performance or an hour more^of battery life?^1.  I prefer the performance^2.  I prefer the hour of battery^3.  No preference ", x, y, spacing)
+    answered = False
+    while not answered:
+        if pins.digital_read_pin(DigitalPin.P0) == 0:
+            answered = True
+            a3 = 1
+            OLED12864_I2C.clear()
+            you_chose("extra performance", 9)
+        elif pins.digital_read_pin(DigitalPin.P1) == 0:
+            answered = True
+            a3 = 2
+            OLED12864_I2C.clear()
+            you_chose("the battery life", 18)
+        elif pins.digital_read_pin(DigitalPin.P2) == 0:
+            answered = True
+            a3 = 3
+            OLED12864_I2C.clear()
+            draw_text("You did not have a preference.", x, 27, spacing)
+            basic.pause(2000)
+    OLED12864_I2C.clear()
+    if a3 == 1:
+        draw_text("A decision has been reached.^You'll like Samsung Galaxy S24.^It's $799, within your budget.^The Pixel 9 is the alternative,^and even though it has one^hour extra of battery, the^S24 outperforms it by 40-60%.", x, y, spacing)
+        while True:
+            basic.pause(1)
+    if a3 == 2:
+        draw_text("A decision has been reached.^We recommend Google Pixel 9.^It's $799, within your budget.^Even though it loses out on^some performance to the GalaxyS24, It makes up for it with^its incredible battery life.", x, y, spacing)
+        while True:
+            basic.pause(1)
+    if a3 == 3:
+        draw_text("Do you prefer stock Android^by Google or the fork of^Android called One UI by^Samsung?^1.  I prefer stock Android^2.  I prefer Samsung's One UI^3.  No preference ", x, y, spacing)
+        answered = False
+        while not answered:
+            if pins.digital_read_pin(DigitalPin.P0) == 0:
+                answered = True
+                a4 = 1
+                OLED12864_I2C.clear()
+                you_chose("stock Android", 9)
+            elif pins.digital_read_pin(DigitalPin.P1) == 0:
+                answered = True
+                a4 = 2
+                OLED12864_I2C.clear()
+                you_chose("One UI", 18)
+            elif pins.digital_read_pin(DigitalPin.P2) == 0:
+                answered = True
+                a4 = 3
+                OLED12864_I2C.clear()
+                draw_text("You did not have a preference.", x, 27, spacing)
+                basic.pause(2000)
+        OLED12864_I2C.clear()
+        if a4 == 2:
+            draw_text("A decision has been reached.^You'll like Samsung Galaxy S24.^It's $799, within your budget.^It runs Samsung's One UI, just^as you wanted it to.", x, y, spacing)
+            while True:
+                basic.pause(1)
+        if a4 == 1:
+            draw_text("A decision has been reached.^We recommend Google Pixel 9.^It's $799, within your budget.^It runs stock Android, just^as you wanted it to.", x, y, spacing)
+            while True:
+                basic.pause(1)
+        if a4 == 3:
+            draw_text("Pixel 9 and Galaxy S24 are the^same size, but the Pixel 9^weighs 20% more. Some think it^feels premium, others think its^impractical. Your preference?^1.  Extra weight is better^2.  Less weight is practical", x, y, spacing)
+            answered = False
+            while not answered:
+                if pins.digital_read_pin(DigitalPin.P0) == 0:
+                    answered = True
+                    a5 = 1
+                    OLED12864_I2C.clear()
+                    you_chose("the extra weight", 9)
+                elif pins.digital_read_pin(DigitalPin.P1) == 0:
+                    answered = True
+                    a5 = 2
+                    OLED12864_I2C.clear()
+                    you_chose("less weight", 18)
+            OLED12864_I2C.clear()
+            if a5 == 2:
+                draw_text("A decision has been reached.^You'll like Samsung Galaxy S24.^It's $799, within your budget.^It is 20% lighter than the Pixel 9,^just like you wanted it to be.", x, y, spacing)
+                while True:
+                    basic.pause(1)
+            if a5 == 1:
+                draw_text("A decision has been reached.^We recommend Google Pixel 9.^It's $799, within your budget.^It has the extra weight to^make it feel more premium too.", x, y, spacing)
+                while True:
+                    basic.pause(1)
 draw_text("Desired refresh rate?^1.  60Hz^2.  90Hz^3.  120Hz+", x, y, spacing)
 answered = False
 while not answered:
     if pins.digital_read_pin(DigitalPin.P0) == 0:
         answered = True
-        a3 = 1
+        a4 = 1
         OLED12864_I2C.clear()
         you_chose("60Hz", 9)
     elif pins.digital_read_pin(DigitalPin.P1) == 0:
         answered = True
-        a3 = 2
+        a4 = 2
         OLED12864_I2C.clear()
         you_chose("90Hz", 18)
     elif pins.digital_read_pin(DigitalPin.P2) == 0:
         answered = True
-        a3 = 3
+        a4 = 3
         OLED12864_I2C.clear()
         you_chose("120Hz+", 27)
 
